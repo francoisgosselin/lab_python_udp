@@ -1,17 +1,30 @@
-print("\n--- Partie 5 : bytes / bytearray ---")
+import socket
+from pathlib import Path
+import hashlib
 
-# bytes : immuable
-data = b"ABC"
-print(data)          # b'ABC'
-print(data[0])       # 65
-print(chr(data[0]))  # 'A'
+def flip_first_bit(data: bytes) -> bytes:
+    if len(data) == 0:
+        return data
+    ba = bytearray(data)
+    ba[0] ^= 0b00000001  # inverse le bit de poids faible du 1er octet
+    return bytes(ba)
 
-# bytearray : modifiable
-ba = bytearray(b"ABC")
-ba[0] = 66           # 'B'
-print(bytes(ba))     # b'BBC'
+HOST = "127.0.0.1"
+PORT = 12345
 
-# slicing
-data2 = b"ABCDEFG"
-print(data2[0:3])    # b'ABC'
-print(data2[3:])     # b'DEFG'
+# Lire le message original
+msg = Path("data/message.txt").read_text(encoding="utf-8").encode("utf-8")
+
+# 1) Calculer le hash du message ORIGINAL
+hash_hex = hashlib.sha256(msg).hexdigest().encode("ascii")
+
+# 2) Corrompre le message
+corrupted_msg = flip_first_bit(msg)
+
+# 3) Envoyer message corrompu + hash original
+payload = corrupted_msg + b"\x00" + hash_hex
+
+with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+    s.sendto(payload, (HOST, PORT))
+    data, _ = s.recvfrom(1024)
+    print("Réponse du serveur :", data.decode("utf-8", errors="replace"))
