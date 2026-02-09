@@ -9,12 +9,18 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
     print(f"Serveur UDP sur {HOST}:{PORT}")
 
     while True:
-        data, addr = s.recvfrom(2048)
+        data, addr = s.recvfrom(4096)
 
-        message, hash_hex = data.split(b"\x00", 1)
-        calc = hashlib.sha256(message).hexdigest().encode("ascii")
+        # Séparer contenu et hash
+        content, recv_hash = data.split(b"\x00", 1)
 
-        if calc == hash_hex:
-            s.sendto(b"Message et hachage valides", addr)
+        nonce = content[:16]
+        message = content[16:]
+
+        # Recalculer le hash
+        calc = hashlib.sha256(nonce + message).digest()
+
+        if calc == recv_hash:
+            s.sendto(b"Message, nonce et hachage valides", addr)
         else:
             s.sendto(b"Erreur de hachage", addr)

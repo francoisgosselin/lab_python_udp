@@ -1,28 +1,22 @@
 import socket
 from pathlib import Path
 import hashlib
-
-def flip_first_bit(data: bytes) -> bytes:
-    if len(data) == 0:
-        return data
-    ba = bytearray(data)
-    ba[0] ^= 0b00000001  # inverse le bit de poids faible du 1er octet
-    return bytes(ba)
+import secrets
 
 HOST = "127.0.0.1"
 PORT = 12345
 
-# Lire le message original
+# Lire le message
 msg = Path("data/message.txt").read_text(encoding="utf-8").encode("utf-8")
 
-# 1) Calculer le hash du message ORIGINAL
-hash_hex = hashlib.sha256(msg).hexdigest().encode("ascii")
+# Générer un nonce aléatoire (16 octets)
+nonce = secrets.token_bytes(16)
 
-# 2) Corrompre le message
-corrupted_msg = flip_first_bit(msg)
+# Calculer le hash sur nonce + message
+digest = hashlib.sha256(nonce + msg).digest()
 
-# 3) Envoyer message corrompu + hash original
-payload = corrupted_msg + b"\x00" + hash_hex
+# Payload : nonce + message + séparateur + hash
+payload = nonce + msg + b"\x00" + digest
 
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
     s.sendto(payload, (HOST, PORT))
