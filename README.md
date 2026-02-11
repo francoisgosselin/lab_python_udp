@@ -24,5 +24,7 @@ hexdigest() est plus pratique pour l’affichage et les échanges textuels, alor
 Un nonce sert à garantir l’unicité d’un message lors d’un échange réseau. Il permet d’empêcher les attaques par rejeu en s’assurant qu’un ancien message capturé ne puisse
 pas être réutilisé avec succès, même si le contenu du message est identique.
 
+les parties en commentaire sont fait pour pourvoir tester les autres parties sans problèmess. Penser a les enlever chacune pour lancer chaque question.
+
 ```bash
 python main.py
