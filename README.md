@@ -9,6 +9,8 @@ Ce laboratoire présente une introduction à la programmation réseau en Python 
 len(s) mesure le nombre de caractères d’une chaîne Unicode (str), tandis que len(b) mesure le nombre d’octets (bytes). En UTF-8, certains caractères comme les accents ou
 les emojis sont encodés sur plusieurs octets, ce qui explique que la longueur en bytes soit souvent supérieure à la longueur en caractères.
 
+**ok**
+
 ## Question – Partie 3 
 Les sockets transmettent des données binaires car les protocoles réseau sont indépendants de l’encodage des caractères. L’utilisation de bytes permet de contrôler explicitement l’encodage (UTF-8, ASCII, etc.) et d’assurer une communication fiable entre systèmes
 différents
@@ -19,6 +21,7 @@ D'ou la modification de la taille du buffer en recvfrom(1024) ou recvfrom(2048),
 
 ## Question – Partie 4 
 hexdigest() est plus pratique pour l’affichage et les échanges textuels, alors que digest() est plus compact pour les traitements binaires.
+**digest: encodage représenté par des octets, hexdigest: encodage représenté comme une chaine de caractères hexadécimaux**
 
 ## Question – Partie 7 
 Un nonce sert à garantir l’unicité d’un message lors d’un échange réseau. Il permet d’empêcher les attaques par rejeu en s’assurant qu’un ancien message capturé ne puisse
@@ -28,3 +31,4 @@ les parties en commentaire sont fait pour pourvoir tester les autres parties san
 
 ```bash
 python main.py
+```
