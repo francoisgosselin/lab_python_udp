@@ -111,12 +111,14 @@ import secrets
 
 HOST = "127.0.0.1"
 PORT = 12345
+NONCE_SIZE = 16
+BLOCK_SIZE = 1024
 
 # Lire le message en UTF-8
 msg = Path("data/message.txt").read_text(encoding="utf-8").encode("utf-8")
 
 # Générer un nonce aléatoire (16 octets)
-nonce = secrets.token_bytes(16)
+nonce = secrets.token_bytes(NONCE_SIZE)
 
 # Calculer le hash sur nonce + message
 digest = hashlib.sha256(nonce + msg).digest()
@@ -126,7 +128,7 @@ payload = nonce + msg + b"\x00" + digest
 
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
     s.sendto(payload, (HOST, PORT))
-    data, _ = s.recvfrom(1024)
+    data, _ = s.recvfrom(BLOCK_SIZE)
     print("Réponse du serveur :", data.decode("utf-8", errors="replace"))
 
 
